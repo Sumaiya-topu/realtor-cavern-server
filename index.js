@@ -8,7 +8,7 @@ const cors = require("cors");
 const app = express();
 require("dotenv").config();
 const port = process.env.PORT || 5000;
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 
 //middlewares
 app.use(cors());
@@ -38,6 +38,7 @@ async function run() {
     /*  GET (/projects)
         GET (/projects/:projectId)
         PUT (/project/:projectId)
+        GET (/projects/agency-code)
     */
 
     app.get("/projects", async (req, res) => {
@@ -48,20 +49,40 @@ async function run() {
     });
 
     app.get("/projects/:id", async (req, res) => {
-      const projectId = req.params.id;
-      const query = { project_id: projectId };
-      const projectData = await projectCollection.findOne(query);
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const projectData = await projectCollection.find(query);
       res.send(projectData);
     });
 
-    // /*
-    //   GET (/proposals)
-    // */
+    app.get("/agencyprojects/:exec", async (req, res) => {
+      const agencyCode = req.params.exec;
+      const query = { exec: agencyCode };
+      const projectsData = await projectCollection.find(query).toArray();
+      res.send(projectsData);
+    });
+
+    /*
+      GET (/proposals)
+      POST (/proposals)
+      
+     */
     app.get("/proposals", async (req, res) => {
       const query = {};
       const cursor = proposalCollection.find(query);
       const proposals = await cursor.toArray();
       res.send(proposals);
+    });
+
+    app.post("/proposals", async (req, res) => {
+      let proposalsData = req.body;
+      proposalsData = {
+        ...proposalsData,
+        isApproved: false,
+        proposal_date: new Date(),
+      };
+      const result = await proposalCollection.insertOne(proposalsData);
+      res.send(result);
     });
   } finally {
   }
