@@ -58,7 +58,10 @@ async function run() {
     app.get("/agencyprojects/:exec", async (req, res) => {
       const agencyCode = req.params.exec;
       const query = { exec: agencyCode };
-      const projectsData = await projectCollection.find(query).toArray();
+      let projectsData = await projectCollection.find(query).toArray();
+      let proposalsData = await proposalCollection.find(query).toArray();
+      projectsData = [...projectsData, proposalsData];
+
       res.send(projectsData);
     });
 
