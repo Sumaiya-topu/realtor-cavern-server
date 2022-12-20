@@ -34,6 +34,7 @@ async function run() {
     const proposalCollection = dbClient
       .db("realtorCavern")
       .collection("proposals");
+    const userCollection = dbClient.db("realtorCavern").collection("users");
 
     /*  GET (/projects)
         GET (/projects/:projectId)
@@ -86,6 +87,28 @@ async function run() {
       };
       const result = await proposalCollection.insertOne(proposalsData);
       res.send(result);
+    });
+
+    /*
+      POST (/users)
+      GET (/users)
+    */
+
+    app.post("/users", async (req, res) => {
+      let user = req.body;
+      user = {
+        ...user,
+        verified: false,
+      };
+      const email = user.email;
+      const query = { email };
+      const userFindResult = await userCollection.findOne(query);
+      if (!userFindResult) {
+        const result = await userCollection.insertOne(user);
+        res.send(result);
+      } else {
+        res.send({});
+      }
     });
   } finally {
   }
