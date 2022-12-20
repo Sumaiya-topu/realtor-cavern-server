@@ -110,6 +110,29 @@ async function run() {
         res.send({});
       }
     });
+
+    /*
+      PUT (/approved/:id)
+    */
+    app.put("/approved/:id", async (req, res) => {
+      let isApproved = await proposalCollection.updateOne(
+        { _id: ObjectId(req.params.id) },
+        {
+          $set: {
+            isApproved: true,
+          },
+        }
+      );
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+
+      const updatedDoc = await proposalCollection.findOne(query);
+
+      const result = await projectCollection.insertOne(updatedDoc);
+      const dlt = await proposalCollection.deleteOne(query);
+
+      res.send(result);
+    });
   } finally {
   }
 }
