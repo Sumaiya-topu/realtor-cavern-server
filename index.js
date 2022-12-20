@@ -37,8 +37,8 @@ async function run() {
     const userCollection = dbClient.db("realtorCavern").collection("users");
 
     /*  GET (/projects)
-        GET (/projects/:projectId)
-        PUT (/project/:projectId)
+        GET (/projects/:id)
+        PUT (/project/:id)
         GET (/projects/agency-code)
     */
 
