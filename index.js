@@ -42,6 +42,13 @@ async function run() {
       const projects = await cursor.toArray();
       res.send(projects);
     });
+
+    app.get("/projects/:id", async (req, res) => {
+      const projectId = req.params.id;
+      const query = { project_id: projectId };
+      const projectData = await projectCollection.findOne(query);
+      res.send(projectData);
+    });
   } finally {
   }
 }
