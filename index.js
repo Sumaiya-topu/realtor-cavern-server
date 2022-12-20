@@ -1,3 +1,8 @@
+/*
+DB_USER=realtorUser
+DB_PASSWORD=0r5oNzrrusUWNOjD
+*/
+
 const express = require("express");
 const cors = require("cors");
 const app = express();
@@ -5,10 +10,6 @@ require("dotenv").config();
 const port = process.env.PORT || 5000;
 const { MongoClient, ServerApiVersion } = require("mongodb");
 
-/*
-DB_USER=realtorUser
-DB_PASSWORD=0r5oNzrrusUWNOjD
-*/
 //middlewares
 app.use(cors());
 app.use(express.json());
@@ -24,12 +25,15 @@ const dbClient = new MongoClient(uri, {
   useUnifiedTopology: true,
   serverApi: ServerApiVersion.v1,
 });
-
+// console.log(dbClient);
 async function run() {
   try {
     const projectCollection = dbClient
       .db("realtorCavern")
       .collection("projects");
+    const proposalCollection = dbClient
+      .db("realtorCavern")
+      .collection("proposals");
 
     /*  GET (/projects)
         GET (/projects/:projectId)
@@ -48,6 +52,16 @@ async function run() {
       const query = { project_id: projectId };
       const projectData = await projectCollection.findOne(query);
       res.send(projectData);
+    });
+
+    // /*
+    //   GET (/proposals)
+    // */
+    app.get("/proposals", async (req, res) => {
+      const query = {};
+      const cursor = proposalCollection.find(query);
+      const proposals = await cursor.toArray();
+      res.send(proposals);
     });
   } finally {
   }
