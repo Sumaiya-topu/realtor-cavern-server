@@ -111,10 +111,11 @@ async function run() {
       }
     });
 
-    app.get("/users", async (req, res) => {
-      const query = {};
-      const cursor = userCollection.find(query);
-      const userData = await cursor.toArray();
+    app.get("/users/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email };
+      const userData = await userCollection.findOne(query);
+
       res.send(userData);
     });
 
