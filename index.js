@@ -111,6 +111,13 @@ async function run() {
       }
     });
 
+    app.get("/users", async (req, res) => {
+      const query = {};
+      const cursor = userCollection.find(query);
+      const userData = await cursor.toArray();
+      res.send(userData);
+    });
+
     /*
       PUT (/approved/:id)
     */
